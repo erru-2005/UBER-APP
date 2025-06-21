@@ -2,13 +2,13 @@ const dotenv= require('dotenv');
 dotenv.config();
 const http = require('http');
 const app= require('./app');
+const {initializeSocket} = require('./socket');
 
 const PORT = process.env.PORT || 3000;
 
-
-
-
 server=http.createServer(app);
+
+initializeSocket(server);
 
 
 server.listen( PORT,()=>{

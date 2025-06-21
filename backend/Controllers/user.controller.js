@@ -11,7 +11,12 @@ module.exports.registerUser=async(req,res,next)=>{
     }
     try
     {
-    const {fullname,email,password}=req.body
+    const {fullname,email,password}=req.body;
+    isUserExit= await usermodel.findOne({email});
+    if(isUserExit)
+    {
+        return res.status(400).json({message: "User already exist"});
+    }
     const hashPassword = await usermodel.hashPassword(password);
 
 
@@ -48,9 +53,10 @@ module.exports.loginUser=async(req,res,next)=>{
             return res.status(401).json({message: "Invalid Email or Password"});
         }
         const isValid = await user.comparePassword(password);
+        
         if(!isValid)
         {
-            return res.status(401).json({message: "Invalid Email or Password"});
+            return res.status(401).json({message: "Invalid Email or Password."});
         }
         const token = user.generateAuthToken();
         res.cookie("token",token,{httpOnly:true});
@@ -77,11 +83,12 @@ return res.status(200).json({user: req.user});
 
 
 module.exports.logOutUser=async(req,res)=>{
-    res.clearCookie("token");
-
-    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+   
     
+    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+   
+    res.clearCookie("token");
     await BlacklistedToken.create({token});
-    res.status(201).json({message:'Logged out'})
+    return res.status(200).json({message:'Logged out'})
 
 }

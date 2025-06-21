@@ -38,8 +38,7 @@ userschema.methods.generateAuthToken = function () {
 }
 //comparing the hashed password
 userschema.methods.comparePassword = async function (password) {
-    return await bcrypt.compare(password, this.password);
-    
+    return await bcrypt.compare(password, this.password);   
 }
 // converting the password into hash password
 userschema.statics.hashPassword = async function (password) { // Change 'static' to 'statics'
